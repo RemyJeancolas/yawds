@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  yawds:
+    build: .
+    volumes:
+      - ./src:/code/src
+      - ./package.json:/code/package.json
+      - ./tsconfig.json:/code/tsconfig.json
+      - ./typings.d.ts:/code/typings.d.ts
+      - ./tslint.json:/code/tslint.json
+      - /code/node_modules
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+    links:
+      - mongo
+    command: npm run dev
+
+  mongo:
+    image: mongo:3
+    ports:
+      - "27020:27017"

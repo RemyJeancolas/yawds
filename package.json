@@ -2,11 +2,14 @@
   "name": "yawds",
   "version": "1.0.0",
   "description": "Yet Another WebDAV Server",
-  "main": "index.js",
+  "main": "build/index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf build && tsc",
-    "lint": "tslint --project tsconfig-linter.json -c tslint.json ./src/{,**/}*.ts ./tests/{,**/}*.ts"
+    "lint": "tslint --project tsconfig-linter.json -c tslint.json ./src/{,**/}*.ts ./tests/{,**/}*.ts -t verbose",
+    "dev": "NODE_ENV=development nodemon --watch src -e ts --exec 'ts-node src/index.ts'",
+    "start": "node build/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,17 +21,33 @@
     "RFC2518",
     "RFC4918"
   ],
-  "author": "Rémy Jeancolas",
-  "license": "ISC",
+  "author": {
+    "name": "Rémy Jeancolas",
+    "email": "remy.jeancolas@illogeek.eu"
+  },
+  "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "config": "^1.27.0",
     "express": "^4.16.2",
+    "inversify": "^4.3.0",
     "mime-types": "^2.1.17",
-    "moment": "^2.19.1"
+    "moment": "^2.19.1",
+    "on-finished": "^2.3.0",
+    "on-headers": "^1.0.1",
+    "range_check": "^1.4.0",
+    "reflect-metadata": "^0.1.10",
+    "xml2js": "^0.4.19",
+    "xmlbuilder": "^9.0.4"
   },
   "devDependencies": {
+    "@types/body-parser": "^1.16.5",
     "@types/config": "0.0.33",
     "@types/express": "^4.0.37",
+    "@types/http-errors": "^1.6.1",
+    "@types/xml2js": "^0.4.0",
+    "@types/xmlbuilder": "0.0.31",
+    "nodemon": "^1.12.1",
     "ts-node": "^3.3.0",
     "tslint": "^5.8.0",
     "tslint-microsoft-contrib": "^5.0.1",
