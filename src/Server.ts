@@ -9,9 +9,11 @@ import { Error as DavError } from './dav/Error';
 import { Constants } from './dav/Constants';
 import { WebdavController } from './controllers/WebdavController';
 import { displayIP } from 'range_check';
+import { Backend } from './dav/backends/Backend';
 
 interface ServerConfig {
     port: number;
+    backend: Backend;
     baseUri?: string;
     maxBodyLength?: string|number;
 }
@@ -23,6 +25,7 @@ export class Server {
 
     private server: express.Application;
     private webdavController: WebdavController;
+    private backend: Backend;
 
     constructor(config: ServerConfig) {
         if (typeof config !== 'object' || typeof config.port !== 'number' || config.port < 1 || config.port > 65535) {
@@ -35,6 +38,10 @@ export class Server {
             : '/';
 
         this.maxBodyLength = config.maxBodyLength || '1mb';
+
+        // Save backend and bind it to inject it everywhere if needed
+        this.backend = config.backend;
+        container.bind<Backend>('Backend').toConstantValue(this.backend).whenTargetNamed('Webdav');
 
         this.webdavController = container.getNamed<WebdavController>('Controller', 'Webdav');
     }
@@ -123,6 +130,9 @@ export class Server {
             }
             return next(new NotFound('Resource not found'));
         }
+
+        // Save baseUri in request in order to be able to perform url translation later
+        req.baseUri = this.baseUri;
 
         try {
             switch (req.method) {

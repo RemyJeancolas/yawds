@@ -1,5 +1,6 @@
 import { injectable, inject, named } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
+import { NotFound } from 'http-errors';
 import { WebdavService } from '../services/WebdavService';
 
 @injectable()
@@ -11,7 +12,10 @@ export class WebdavController {
     }
 
     public async propfind(req: Request, res: Response, next: NextFunction): Promise<void> {
-        const result = await this.webdavService.propfind(req.get('depth'), req.body);
+        const result = await this.webdavService.propfind(req.baseUri, req.url, req.get('depth'), req.body);
+        if (!result) {
+            throw new NotFound(`Resource ${req.url} not found`);
+        }
         console.log(result);
         throw new Error('foo');
     }

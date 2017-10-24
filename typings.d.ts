@@ -15,3 +15,10 @@ declare module 'range_check' {
     export function isIP(ip: string): boolean;
     export function displayIP(ip: string): string;
 }
+
+// HTTP module override
+declare module 'http' {
+    export interface IncomingMessage {
+        baseUri?: string;
+    }
+}
