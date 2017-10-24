@@ -124,10 +124,14 @@ export class Server {
             return next(new NotFound('Resource not found'));
         }
 
-        switch (req.method) {
-            case 'OPTIONS': return this.webdavController.options(req, res, next);
-            case 'PROPFIND': return this.webdavController.propfind(req, res, next);
-            default: next(new MethodNotAllowed('Method not allowed'));
+        try {
+            switch (req.method) {
+                case 'OPTIONS': return await this.webdavController.options(req, res, next);
+                case 'PROPFIND': return await this.webdavController.propfind(req, res, next);
+                default: next(new MethodNotAllowed('Method not allowed'));
+            }
+        } catch (e) {
+            next(e);
         }
     }
 }

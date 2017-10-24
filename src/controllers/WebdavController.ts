@@ -1,29 +1,18 @@
 import { injectable, inject, named } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
-import { ControllerBase } from './ControllerBase';
-import { Propfind } from '../dav/elements/Propfind';
 import { WebdavService } from '../services/WebdavService';
 
 @injectable()
-export class WebdavController extends ControllerBase {
-    constructor(@inject('Service') @named('Webdav') private webdavService: WebdavService) {
-        super();
-    }
+export class WebdavController {
+    constructor(@inject('Service') @named('Webdav') private webdavService: WebdavService) {}
 
     public async options(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            res.header('DAV', '1').end();
-        } catch (e) {
-            this.handleError(e, next);
-        }
+        res.header('DAV', '1').end();
     }
 
     public async propfind(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            console.log(await Propfind.parse(req.body));
-            throw new Error('foo');
-        } catch (e) {
-            this.handleError(e, next);
-        }
+        const result = await this.webdavService.propfind(req.get('depth'), req.body);
+        console.log(result);
+        throw new Error('foo');
     }
 }
